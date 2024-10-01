@@ -119,5 +119,5 @@ void menu() {
 
 int main() {
     menu();  // Inicia o menu, onde o programa começa sua execução.
-    return 0; // Retorna 0, indicando que o programa terminou corretamente.
-}
+    return 0;} // Retorna 0, indicando que o programa terminou corretamente.
+
