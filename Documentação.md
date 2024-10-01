@@ -1,128 +1,236 @@
-#include <iostream>  // Biblioteca padrão para entrada e saída.
 
+# Sistema de Vacinação
+
+Este projeto implementa um sistema de vacinação simples, onde pessoas são adicionadas a uma fila para serem vacinadas. O sistema gerencia a quantidade de doses disponíveis em frascos e remove pessoas da fila à medida que são vacinadas.
+
+## Bibliotecas Utilizadas
+
+```cpp
+#include <iostream>  // Biblioteca padrão para entrada e saída de dados.
 #include <queue>     // Biblioteca que fornece a estrutura de dados 'queue' (fila).
-
 #include <stack>     // Biblioteca que fornece a estrutura de dados 'stack' (pilha).
-
 #include <string>    // Biblioteca para manipulação de strings.
+```
 
+## Namespace
 
-using namespace std; // Usando o namespace padrão 'std', que facilita o uso de cout, cin, etc., sem precisar prefixá-los com 'std::'.
+Utilizamos o namespace `std` para simplificar a utilização de funções como `cout`, `cin` e outras funções da biblioteca padrão.
 
+```cpp
+using namespace std;
+```
 
-// Estrutura para armazenar informações de cada pessoa
+## Estruturas
+
+### Estrutura `Pessoa`
+
+A estrutura `Pessoa` contém as informações básicas de cada pessoa que será vacinada: CPF, nome e idade.
+
+```cpp
 struct Pessoa {
-    string cpf;   // Armazena o CPF da pessoa.
-    string nome;  // Armazena o nome da pessoa.
-    int idade;    // Armazena a idade da pessoa.
+    string cpf;   // CPF da pessoa.
+    string nome;  // Nome da pessoa.
+    int idade;    // Idade da pessoa.
 };
+```
 
-// Estrutura para controlar as doses do frasco
+### Estrutura `Frasco`
+
+A estrutura `Frasco` controla o número de doses disponíveis por frasco. Cada frasco começa com 5 doses.
+
+```cpp
 struct Frasco {
     int dosesDisponiveis = 5; // Cada frasco começa com 5 doses.
 };
+```
 
-// Variáveis globais
+## Variáveis Globais
+
+- `fila`: Fila de pessoas aguardando para serem vacinadas.
+- `pilhaFrascos`: Pilha de frascos de vacina, cada um com 5 doses.
+- `totalVacinados`: Contador que armazena o total de pessoas vacinadas até o momento.
+
+```cpp
 queue<Pessoa> fila;             // Fila de pessoas esperando para vacinar.
 stack<Frasco> pilhaFrascos;     // Pilha de frascos de vacina.
-int totalVacinados = 0;         // Contador global para o total de pessoas vacinadas.
+int totalVacinados = 0;         // Contador de vacinados.
+```
 
-// Função para empilhar os frascos iniciais.
+## Funções
+
+### Função `inicializarFrascos`
+
+Essa função inicializa 3 frascos de vacina, empilhando-os na estrutura `pilhaFrascos`. Cada frasco contém 5 doses.
+
+```cpp
 void inicializarFrascos() {
     for (int i = 0; i < 3; i++) {          // Adiciona 3 frascos com 5 doses cada.
-        pilhaFrascos.push(Frasco());       // Cada iteração empilha um novo frasco.
+        pilhaFrascos.push(Frasco());       // Empilha cada frasco na pilha.
     }
 }
+```
 
-// Função para adicionar uma pessoa na fila.
+### Função `adicionarPessoa`
+
+Essa função adiciona uma nova pessoa à fila de vacinação, desde que haja menos de 15 pessoas na fila e ainda existam frascos de vacina disponíveis.
+
+```cpp
 void adicionarPessoa() {
-    if (fila.size() < 15 && !pilhaFrascos.empty()) {   // Verifica se há menos de 15 pessoas na fila e se há frascos disponíveis.
-        Pessoa novaPessoa;           // Cria uma nova estrutura 'Pessoa'.
-        cout << "Digite o CPF: ";     // Solicita o CPF da pessoa.
-        cin >> novaPessoa.cpf;        // Lê o CPF digitado.
-        cout << "Digite o nome: ";    // Solicita o nome da pessoa.
-        cin >> novaPessoa.nome;       // Lê o nome digitado.
-        cout << "Digite a idade: ";   // Solicita a idade da pessoa.
-        cin >> novaPessoa.idade;      // Lê a idade digitada.
+    if (fila.size() < 15 && !pilhaFrascos.empty()) {   // Verifica se há menos de 15 pessoas na fila e frascos disponíveis.
+        Pessoa novaPessoa;
+        cout << "Digite o CPF: ";
+        cin >> novaPessoa.cpf;
+        cout << "Digite o nome: ";
+        cin >> novaPessoa.nome;
+        cout << "Digite a idade: ";
+        cin >> novaPessoa.idade;
 
-        fila.push(novaPessoa);        // Adiciona a nova pessoa à fila.
-        cout << "Pessoa adicionada à fila.\n";  // Confirma que a pessoa foi adicionada.
+        fila.push(novaPessoa);        // Adiciona a pessoa à fila de vacinação.
+        cout << "Pessoa adicionada à fila.
+";
     } else {
-        cout << "Fila cheia ou sem frascos disponíveis.\n";  // Mensagem de erro se a fila estiver cheia ou não houver frascos.
+        cout << "Fila cheia ou sem frascos disponíveis.
+";  // Mensagem de erro caso a fila esteja cheia ou não haja frascos.
     }
 }
+```
 
-// Função para vacinar e remover a pessoa da fila.
+### Função `tirarPessoa`
+
+Remove a pessoa da frente da fila e administra uma dose de vacina, utilizando o frasco atual. Se o frasco esvaziar, ele é removido da pilha.
+
+```cpp
 void tirarPessoa() {
     if (!fila.empty()) {                        // Verifica se há pessoas na fila.
         Pessoa pessoa = fila.front();           // Obtém a primeira pessoa da fila.
         fila.pop();                             // Remove a pessoa da fila.
 
         if (!pilhaFrascos.empty()) {            // Verifica se há frascos disponíveis.
-            Frasco& frascoAtual = pilhaFrascos.top();  // Obtém o frasco no topo da pilha.
-            frascoAtual.dosesDisponiveis--;           // Diminui uma dose do frasco.
+            Frasco& frascoAtual = pilhaFrascos.top();  // Obtém o frasco atual (no topo da pilha).
+            frascoAtual.dosesDisponiveis--;     // Diminui uma dose do frasco.
 
-            cout << "Pessoa vacinada: " << pessoa.nome << " (CPF: " << pessoa.cpf << ")\n";  // Exibe a confirmação da vacinação.
-            totalVacinados++;  // Incrementa o contador de vacinados.
+            cout << "Pessoa vacinada: " << pessoa.nome << " (CPF: " << pessoa.cpf << ")
+";  // Confirma a vacinação.
+            totalVacinados++;                   // Incrementa o contador de vacinados.
 
             // Se o frasco não tiver mais doses, ele é removido.
             if (frascoAtual.dosesDisponiveis == 0) {
-                cout << "Desempilhando frasco com 0 doses restantes.\n";  // Informa que o frasco foi esvaziado.
+                cout << "Desempilhando frasco com 0 doses restantes.
+";  // Informa que o frasco está vazio.
                 pilhaFrascos.pop();  // Remove o frasco vazio da pilha.
             }
         }
     } else {
-        cout << "Não há pessoas na fila.\n";  // Mensagem caso a fila esteja vazia.
+        cout << "Não há pessoas na fila.
+";  // Mensagem caso a fila esteja vazia.
     }
 }
+```
 
-// Função para imprimir os nomes das pessoas na fila.
+### Função `imprimirFila`
+
+Exibe os nomes de todas as pessoas atualmente na fila de vacinação. A fila original não é alterada, pois é criada uma cópia temporária para impressão.
+
+```cpp
 void imprimirFila() {
     if (fila.empty()) {          // Verifica se a fila está vazia.
-        cout << "Fila vazia.\n"; // Mensagem se não houver pessoas na fila.
-        return;                  // Sai da função.
+        cout << "Fila vazia.
+"; // Mensagem caso a fila esteja vazia.
+        return;
     }
 
-    cout << "Pessoas na fila:\n";     // Exibe cabeçalho.
-    queue<Pessoa> temp = fila;        // Faz uma cópia da fila para não alterar a fila original.
-    while (!temp.empty()) {           // Enquanto houver pessoas na fila.
-        cout << "- " << temp.front().nome << "\n";  // Exibe o nome da pessoa.
-        temp.pop();                   // Remove a pessoa da fila temporária.
+    cout << "Pessoas na fila:
+";
+    queue<Pessoa> temp = fila;   // Cria uma cópia temporária da fila para impressão.
+    while (!temp.empty()) {      // Itera sobre a fila.
+        cout << "- " << temp.front().nome << "
+";  // Exibe o nome da pessoa.
+        temp.pop();                                  // Remove a pessoa da fila temporária.
     }
 }
+```
 
-// Função para exibir o total de pessoas vacinadas.
+### Função `exibirTotalVacinados`
+
+Exibe o total de pessoas que foram vacinadas até o momento.
+
+```cpp
 void exibirTotalVacinados() {
-    cout << "Total de pessoas vacinadas: " << totalVacinados << "\n";  // Exibe o total de vacinados.
+    cout << "Total de pessoas vacinadas: " << totalVacinados << "
+";  // Exibe o número total de vacinados.
 }
+```
 
-// Função do menu que oferece opções ao usuário.
+### Função `menu`
+
+Essa função exibe um menu de opções para o usuário, permitindo que ele adicione pessoas à fila, vacine-as, veja a fila de espera ou o número de vacinados.
+
+```cpp
 void menu() {
     inicializarFrascos();  // Inicializa os frascos de vacina com 5 doses cada.
-    int opcao;             // Variável para armazenar a opção do usuário.
+    int opcao;             // Variável para armazenar a escolha do usuário.
 
     do {
-        cout << "\\nMenu:\\n";
-        cout << "1. Adicionar pessoa na fila\\n";
-        cout << "2. Tirar pessoa da fila\\n";
-        cout << "3. Imprimir nomes da fila\\n";
-        cout << "4. Exibir total de vacinados\\n";
-        cout << "0. Sair\\n";
+        cout << "
+Menu:
+";
+        cout << "1. Adicionar pessoa na fila
+";
+        cout << "2. Tirar pessoa da fila
+";
+        cout << "3. Imprimir nomes da fila
+";
+        cout << "4. Exibir total de vacinados
+";
+        cout << "0. Sair
+";
         cout << "Escolha uma opção: ";
-        cin >> opcao;  // Lê a opção escolhida pelo usuário.
+        cin >> opcao;  // Lê a opção do usuário.
 
         switch (opcao) {
-            case 1: adicionarPessoa(); break;   // Chama a função para adicionar uma pessoa na fila.
-            case 2: tirarPessoa(); break;       // Chama a função para vacinar uma pessoa.
-            case 3: imprimirFila(); break;      // Chama a função para imprimir os nomes das pessoas na fila.
-            case 4: exibirTotalVacinados(); break;  // Chama a função para exibir o total de vacinados.
-            case 0: cout << "Saindo...\\n"; break;  // Exibe uma mensagem de saída.
-            default: cout << "Opção inválida!\\n";  // Exibe mensagem de erro para opções inválidas.
+            case 1: adicionarPessoa(); break;   // Adiciona uma pessoa à fila.
+            case 2: tirarPessoa(); break;       // Remove e vacina uma pessoa.
+            case 3: imprimirFila(); break;      // Imprime os nomes na fila.
+            case 4: exibirTotalVacinados(); break;  // Exibe o total de vacinados.
+            case 0: cout << "Saindo...
+"; break;  // Sai do programa.
+            default: cout << "Opção inválida!
+";  // Exibe mensagem de erro para opções inválidas.
         }
-    } while (opcao != 0);  // O menu continua rodando até que o usuário escolha a opção de sair.
+    } while (opcao != 0);  // Continua rodando o menu até que o usuário escolha a opção de sair.
 }
+```
 
+### Função `main`
+
+Ponto de entrada do programa. Ele chama a função `menu()` para iniciar a interação com o usuário.
+
+```cpp
 int main() {
-    menu();  // Inicia o menu, onde o programa começa sua execução.
-    return 0;} // Retorna 0, indicando que o programa terminou corretamente.
+    menu();  // Inicia o menu, que gerencia a execução do programa.
+    return 0; // Retorna 0, indicando que o programa terminou corretamente.
+}
+```
 
+## Como Rodar o Programa
+
+1. Compile o código usando um compilador C++:
+   ```bash
+   g++ -o sistema_vacinacao sistema_vacinacao.cpp
+   ```
+
+2. Execute o programa:
+   ```bash
+   ./sistema_vacinacao
+   ```
+
+## Funcionalidades
+
+- Adicionar pessoas à fila para vacinação.
+- Vacinar pessoas removendo-as da fila.
+- Imprimir a lista de pessoas na fila.
+- Exibir o número total de pessoas vacinadas.
+
+---
+
+Esse layout permite uma fácil leitura e compreensão do código em um repositório GitHub. Você pode simplesmente salvar este conteúdo em um arquivo `README.md` e adicionar ao repositório.
