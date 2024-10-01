@@ -1,9 +1,14 @@
 #include <iostream>  // Biblioteca padrão para entrada e saída.
+
 #include <queue>     // Biblioteca que fornece a estrutura de dados 'queue' (fila).
+
 #include <stack>     // Biblioteca que fornece a estrutura de dados 'stack' (pilha).
+
 #include <string>    // Biblioteca para manipulação de strings.
 
+
 using namespace std; // Usando o namespace padrão 'std', que facilita o uso de cout, cin, etc., sem precisar prefixá-los com 'std::'.
+
 
 // Estrutura para armazenar informações de cada pessoa
 struct Pessoa {
